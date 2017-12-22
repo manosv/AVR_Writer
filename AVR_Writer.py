@@ -53,7 +53,6 @@ class Window(QWidget):
 		self.write.move(110, 300)
 		
 		
-		#self.label.y(20)
 		#Select File Button
 		self.sf = QPushButton("Select File", self)
 		self.sf.clicked.connect(self.selectFile)
