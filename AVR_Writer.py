@@ -53,6 +53,7 @@ class Window(QWidget):
 		self.write.move(110, 300)
 		
 		
+		#self.label.y(20)
 		#Select File Button
 		self.sf = QPushButton("Select File", self)
 		self.sf.clicked.connect(self.selectFile)
@@ -184,6 +185,14 @@ class Window(QWidget):
 				else :
 					self.error("assembly code")
 			elif fileFormat == "c":
+				i = len(self.fileName)
+				while not self.fileName[i-1:i] == "/":
+					i-=1
+				selfdir = self.fileName[:i]
+				os.chdir(selfdir)
+				#f = open(self.fileName, 'r')
+				#data = f.read()
+				#self.debug(data, 1)
 				if self.cRoutine():
 					self.writeRoutine(1)
 				else :
@@ -194,24 +203,23 @@ class Window(QWidget):
 	def asmRoutine(self):
 		command = str("avra " + self.fileName)
 		result = os.popen4(command)[1].read()
-		self.debug(result, 0)
+		self.debug(result, 1)
 		if result == "":
 			return 0
 		else :
 			return 1
-	
 	def cRoutine(self):
 		command = str("avr-gcc -g -Os -mmcu="+self.chipName.lower()+" -c "+self.fileName)
 		result = os.popen4(command)[1].read()
-		self.debug(result, 0)
+		self.debug(result, 1)
 		if self.check(result):
 			command = str("avr-gcc -g -mmcu="+self.chipName.lower()+" -o "+self.fileName[0:len(self.fileName)-2]+".elf "+self.fileName[0:len(self.fileName)-2]+".o")
 			result = os.popen4(command)[1].read()
-			self.debug(result, 0)
+			self.debug(result, 1)
 			if self.check(result):
 				command = str("avr-objcopy -j .text -j .data -O ihex "+self.fileName[0:len(self.fileName)-2]+".elf "+self.fileName[0:len(self.fileName)-2]+".hex")
 				result = os.popen4(command)[1].read()
-				self.debug(result, 0)
+				self.debug(result, 1)
 				if self.check(result):
 					return 1
 				else :
